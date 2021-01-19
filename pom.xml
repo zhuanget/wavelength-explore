@@ -100,12 +100,18 @@
 		<dependency>
 			<groupId>us.codecraft</groupId>
 			<artifactId>webmagic-core</artifactId>
-			<version>0.7.3</version>
+			<version>0.7.4</version>
 		</dependency>
 		<dependency>
 			<groupId>us.codecraft</groupId>
 			<artifactId>webmagic-extension</artifactId>
-			<version>0.7.3</version>
+			<version>0.7.4</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/us.codecraft/xsoup -->
+		<dependency>
+			<groupId>us.codecraft</groupId>
+			<artifactId>xsoup</artifactId>
+			<version>0.3.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

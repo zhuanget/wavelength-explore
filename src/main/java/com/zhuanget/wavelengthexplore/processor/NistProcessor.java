@@ -15,10 +15,6 @@ import us.codecraft.webmagic.processor.PageProcessor;
 @Slf4j
 public class NistProcessor implements PageProcessor {
 
-    static {
-        System.setProperty("https.protocols", "TLSv1,TLSv1.1,TLSv1.2");
-    }
-
     private Site site = Site.me().setRetrySleepTime(1000).setRetryTimes(3);
 
     @Override
@@ -33,12 +29,13 @@ public class NistProcessor implements PageProcessor {
     }
 
     public static void main(String[] args) {
-        Spider.create(new SimpleBookProcessor())
-                .addUrl(CrawlConst.DATABASE_URL)
-//                .addPipeline(new ESPipeline())
-//                .addPipeline(new DownloadImagePipeline())
-                .addPipeline(new JsonFilePipeline("D:\\webmagic\\"))
-                .thread(5)
-                .run();
+        Spider spider = Spider.create(new NistProcessor());
+
+        String[] elements = new String[]{"Cu", "Ca", "Fe"};
+        String[] urls = new String[elements.length];
+        for (int i = 0; i < elements.length; i++) {
+            urls[i] = CrawlConst.SEARCH_URL_PREFIX + elements[i] + CrawlConst.SEARCH_URL_SUFFIX;
+        }
+        spider.addUrl(urls).addPipeline(new JsonFilePipeline("D:\\webmagic\\")).thread(5).run();
     }
 }
