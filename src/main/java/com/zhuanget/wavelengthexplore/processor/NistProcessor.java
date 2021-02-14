@@ -15,10 +15,6 @@ import us.codecraft.webmagic.processor.PageProcessor;
 @Slf4j
 public class NistProcessor implements PageProcessor {
 
-    static {
-        System.setProperty("https.protocols", "TLSv1,TLSv1.1,TLSv1.2");
-    }
-
     private Site site = Site.me().setRetrySleepTime(1000).setRetryTimes(3);
 
     @Override
