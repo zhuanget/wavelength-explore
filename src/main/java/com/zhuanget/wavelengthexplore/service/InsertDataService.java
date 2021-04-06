@@ -7,4 +7,6 @@ package com.zhuanget.wavelengthexplore.service;
 public interface InsertDataService {
 
     void insertESData();
+
+    void addBodyArchiveData();
 }

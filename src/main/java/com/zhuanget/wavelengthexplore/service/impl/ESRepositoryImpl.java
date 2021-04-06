@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -127,6 +128,30 @@ public class ESRepositoryImpl implements ESRepository {
         }
         try (RestHighLevelClient restHighLevelClient = getClient()) {
             String endpoint = index + "/" + "_bulk";
+            Request request = new Request(ESMethod.POST.getMethod(), endpoint);
+            HttpEntity entity = new NStringEntity(sb.toString(), ContentType.APPLICATION_JSON);
+            request.setEntity(entity);
+            Response response = restHighLevelClient.getLowLevelClient().performRequest(request);
+            log.info("response.entity: {}", response.getEntity());
+            return list.size();
+        } catch (IOException e) {
+            log.error("batch insert doc to index[{}] error, e: ", index, e);
+        }
+        return 0;
+    }
+
+    @Override
+    public <T> int batchInsert(List<T> list, String index, String type) {
+        if (CollectionUtils.isEmpty(list)) {
+            return 0;
+        }
+        StringBuilder sb = new StringBuilder();
+        String metaData = "{ \"index\":{} }\n";
+        for (T obj : list) {
+            sb.append(metaData).append(JSON.toJSONString(obj)).append('\n');
+        }
+        try (RestHighLevelClient restHighLevelClient = getClient()) {
+            String endpoint = index + "/" + type + "/_bulk";
             Request request = new Request(ESMethod.POST.getMethod(), endpoint);
             HttpEntity entity = new NStringEntity(sb.toString(), ContentType.APPLICATION_JSON);
             request.setEntity(entity);

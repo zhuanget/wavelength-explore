@@ -57,4 +57,6 @@ public interface ESRepository {
      * @return
      */
     <T> int batchInsert(List<T> list, String index);
+
+    <T> int batchInsert(List<T> list, String index, String type);
 }

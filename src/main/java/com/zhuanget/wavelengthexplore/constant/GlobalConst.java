@@ -73,4 +73,115 @@ public class GlobalConst {
             "        }\n" +
             "    }\n" +
             "}";
+
+    public static final String BIGDATA_BODY_EVENT_INDEX = "bigdata_body_event";
+
+    public static final String BIGDATA_BODY_EVENT_TYPE = "event";
+
+    public static final String BODY_EVENT_MAPPINGS = "{\n" +
+            "    \"properties\": {\n" +
+            "        \"id\": {\n" +
+            "            \"type\": \"keyword\"\n" +
+            "        },\n" +
+            "        \"dt\": {\n" +
+            "            \"type\": \"long\"\n" +
+            "        },\n" +
+            "        \"cid\": {\n" +
+            "            \"type\": \"keyword\"\n" +
+            "        },\n" +
+            "        \"latlon\": {\n" +
+            "            \"type\": \"keyword\"\n" +
+            "        },\n" +
+            "        \"sys_code\": {\n" +
+            "            \"type\": \"keyword\"\n" +
+            "        },\n" +
+            "        \"aid\": {\n" +
+            "            \"type\": \"keyword\"\n" +
+            "        },\n" +
+            "        \"thumbnail_id\": {\n" +
+            "            \"type\": \"keyword\"\n" +
+            "        },\n" +
+            "        \"thumbnail_url\": {\n" +
+            "            \"type\": \"keyword\"\n" +
+            "        },\n" +
+            "        \"image_id\": {\n" +
+            "            \"type\": \"keyword\"\n" +
+            "        },\n" +
+            "        \"image_url\": {\n" +
+            "            \"type\": \"keyword\"\n" +
+            "        },\n" +
+            "        \"algo_version\": {\n" +
+            "            \"type\": \"keyword\"\n" +
+            "        },\n" +
+            "        \"feature_quality\": {\n" +
+            "            \"type\": \"keyword\"\n" +
+            "        },\n" +
+            "        \"body_integrity\": {\n" +
+            "            \"type\": \"keyword\"\n" +
+            "        },\n" +
+            "        \"body_location\": {\n" +
+            "            \"type\": \"keyword\"\n" +
+            "        },\n" +
+            "        \"track_id\": {\n" +
+            "            \"type\": \"keyword\"\n" +
+            "        },\n" +
+            "        \"img_quality\": {\n" +
+            "            \"type\": \"keyword\"\n" +
+            "        },\n" +
+            "        \"target_type\": {\n" +
+            "            \"type\": \"keyword\"\n" +
+            "        },\n" +
+            "        \"area_id\": {\n" +
+            "            \"type\": \"keyword\"\n" +
+            "        },\n" +
+            "        \"body_bike_relationid\": {\n" +
+            "            \"type\": \"keyword\"\n" +
+            "        },\n" +
+            "        \"face_body_relationid\": {\n" +
+            "            \"type\": \"keyword\"\n" +
+            "        },\n" +
+            "        \"cover_confidence\": {\n" +
+            "            \"type\": \"keyword\"\n" +
+            "        },\n" +
+            "        \"quality_info\": {\n" +
+            "            \"type\": \"keyword\"\n" +
+            "        },\n" +
+            "        \"target_rect\": {\n" +
+            "            \"type\": \"keyword\"\n" +
+            "        },\n" +
+            "        \"target_rect_float\": {\n" +
+            "            \"type\": \"keyword\"\n" +
+            "        },\n" +
+            "        \"img_rect\": {\n" +
+            "            \"type\": \"keyword\"\n" +
+            "        },\n" +
+            "        \"img_rect_float\": {\n" +
+            "            \"type\": \"keyword\"\n" +
+            "        },\n" +
+            "        \"source_id\": {\n" +
+            "            \"type\": \"keyword\"\n" +
+            "        },\n" +
+            "        \"source_type\": {\n" +
+            "            \"type\": \"keyword\"\n" +
+            "        },\n" +
+            "        \"time\": {\n" +
+            "            \"type\": \"long\"\n" +
+            "        },\n" +
+            "        \"create_time\": {\n" +
+            "            \"type\": \"long\"\n" +
+            "        },\n" +
+            "        \"column1\": {\n" +
+            "            \"type\": \"keyword\"\n" +
+            "        },\n" +
+            "        \"column2\": {\n" +
+            "            \"type\": \"keyword\"\n" +
+            "        },\n" +
+            "        \"column3\": {\n" +
+            "            \"type\": \"keyword\"\n" +
+            "        },\n" +
+            "        \"is_delete\": {\n" +
+            "            \"type\": \"integer\"\n" +
+            "        }\n" +
+            "    }\n" +
+            "}";
 }
