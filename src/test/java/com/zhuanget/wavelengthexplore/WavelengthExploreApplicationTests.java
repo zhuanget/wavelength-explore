@@ -2,15 +2,23 @@ package com.zhuanget.wavelengthexplore;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.zhuanget.wavelengthexplore.constant.GlobalConst;
 import com.zhuanget.wavelengthexplore.dto.CarArchivesReq;
+import com.zhuanget.wavelengthexplore.entity.ArchiveBankRel;
+import com.zhuanget.wavelengthexplore.entity.ArchiveInfoHistory;
 import com.zhuanget.wavelengthexplore.entity.CarArchivesInfo;
+import com.zhuanget.wavelengthexplore.mapper.ArchiveBankRelMapper;
+import com.zhuanget.wavelengthexplore.mapper.ArchiveInfoHistoryMapper;
 import com.zhuanget.wavelengthexplore.mapper.CarArchivesInfoMapper;
+import com.zhuanget.wavelengthexplore.service.ArchiveBankRelService;
 import com.zhuanget.wavelengthexplore.service.ESRepository;
 import com.zhuanget.wavelengthexplore.service.InsertDataService;
 import com.zhuanget.wavelengthexplore.util.HttpUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.jasypt.encryption.StringEncryptor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +26,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @SpringBootTest
@@ -32,6 +38,15 @@ class WavelengthExploreApplicationTests {
 
 	@Resource
 	private CarArchivesInfoMapper carArchivesInfoMapper;
+
+	@Resource
+	private ArchiveInfoHistoryMapper archiveInfoHistoryMapper;
+
+	@Resource
+	private ArchiveBankRelMapper archiveBankRelMapper;
+
+	@Autowired
+	private ArchiveBankRelService archiveBankRelService;
 
 	@Value("${spring.datasource.username}")
 	private String username;
@@ -87,11 +102,12 @@ class WavelengthExploreApplicationTests {
 
 	@Test
 	void datasource() {
-		log.info("username: {}", username);
 		String root = stringEncryptor.encrypt("root");
 		log.info("root: {}", root);
 		String password = stringEncryptor.encrypt("introcks1234");
 		log.info("password:{}", password);
+		String dec = stringEncryptor.decrypt("rDZqUw9Jk0IT1MFkT5qOR79T7pkQln+I8OkeDtI0PFL1YlNTuYUzt8tteO1CtcOW");
+		log.info("dec: {}", dec);
 	}
 
 	@Test
@@ -101,4 +117,51 @@ class WavelengthExploreApplicationTests {
         insertDataService.addBodyArchiveData();
         log.info("success");
     }
+
+    @Test
+	void historyData() {
+		LambdaQueryWrapper<ArchiveInfoHistory> queryWrapper = new LambdaQueryWrapper<ArchiveInfoHistory>()
+				.select(ArchiveInfoHistory::getAid, ArchiveInfoHistory::getBankArchiveId, ArchiveInfoHistory::getBankEname,
+						ArchiveInfoHistory::getBankId, ArchiveInfoHistory::getModifyTime)
+				.isNotNull(ArchiveInfoHistory::getBankArchiveId)
+				.orderByDesc(ArchiveInfoHistory::getModifyTime);
+		List<ArchiveInfoHistory> archiveInfoHistories = archiveInfoHistoryMapper.selectList(queryWrapper);
+		Map<String, List<ArchiveInfoHistory>> group = archiveInfoHistories.stream().collect(Collectors.groupingBy(ArchiveInfoHistory::getAid));
+		List<ArchiveBankRel> rels = new ArrayList<>();
+		Set<String> set = new HashSet<>();
+		List<ArchiveBankRel> archiveBankRels = archiveBankRelMapper.selectList(new QueryWrapper<>());
+		Map<String, ArchiveBankRel> relMap = new HashMap<>();
+		for (ArchiveBankRel rel : archiveBankRels) {
+			String hash = rel.getBankArchiveId() + ":" + rel.getBankEname() + ":" + rel.getBankId();
+			set.add(hash);
+			relMap.put(hash, rel);
+		}
+		for (Map.Entry<String, List<ArchiveInfoHistory>> entry : group.entrySet()) {
+			for (ArchiveInfoHistory history : entry.getValue()) {
+				String hash = history.getBankArchiveId() + ":" + history.getBankEname() + ":" + history.getBankId();
+				if (set.contains(hash)) {
+					if (relMap.containsKey(hash)) {
+						ArchiveBankRel archiveBankRel = relMap.get(hash);
+						archiveBankRel.setAid(history.getAid());
+						ArchiveBankRel relCondition = new ArchiveBankRel()
+								.setBankArchiveId(history.getBankArchiveId())
+								.setBankId(history.getBankId());
+						archiveBankRelMapper.update(archiveBankRel, new UpdateWrapper<>(relCondition));
+					}
+				} else {
+					ArchiveBankRel archiveBankRel = new ArchiveBankRel();
+					archiveBankRel.setAid(history.getAid())
+							.setBankArchiveId(history.getBankArchiveId())
+							.setBankEname(history.getBankEname())
+							.setBankId(history.getBankId());
+					rels.add(archiveBankRel);
+					set.add(hash);
+				}
+			}
+		}
+		if (CollectionUtils.isNotEmpty(rels)) {
+			archiveBankRelService.saveBatch(rels);
+		}
+		log.info("test");
+	}
 }

@@ -36,14 +36,14 @@ public class AutoCodeGenerator {
     //作者
     private static String authorName = "Zhuang_ET";
     //要生成的表名
-    private static String[] tables = {"t_car_archives_info"};
+    private static String[] tables = {"t_archive_bank_rel"};
     //table前缀
     private static String prefix = "t_";
 
     //数据库配置四要素
     //数据库类型默认配置的是： DbType.MYSQL ，如有改变修改gen.setDataSource
     private static String driverName = "com.mysql.jdbc.Driver";
-    private static String url = "jdbc:mysql://192.168.13.23:32000/ifaas_deepeye_api?useUnicode=true&characterEncoding=utf8&useSSL=false";
+    private static String url = "jdbc:mysql://192.168.89.200:32000/ifaas_datamining?useUnicode=true&characterEncoding=utf8&useSSL=false";
     private static String username = "root";
     private static String password = "introcks1234";
 

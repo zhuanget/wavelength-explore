@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhuanget.wavelengthexplore.mapper.ArchiveBankRelMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.zhuanget.wavelengthexplore.entity.ArchiveBankRel">
+        <id column="aid" property="aid" />
+        <result column="bank_id" property="bankId" />
+        <result column="bank_ename" property="bankEname" />
+        <result column="bank_archive_id" property="bankArchiveId" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        aid, bank_id, bank_ename, bank_archive_id
+    </sql>
+
+</mapper>

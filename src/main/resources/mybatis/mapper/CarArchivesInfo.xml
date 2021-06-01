@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhuanget.wavelengthexplore.mapper.CarArchivesInfoMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.zhuanget.wavelengthexplore.entity.CarArchivesInfo">
+        <id column="id" property="id" />
+        <result column="plate_number" property="plateNumber" />
+        <result column="plate_type" property="plateType" />
+        <result column="plate_color" property="plateColor" />
+        <result column="type" property="type" />
+        <result column="color" property="color" />
+        <result column="brand_code" property="brandCode" />
+        <result column="brand_name" property="brandName" />
+        <result column="small_image" property="smallImage" />
+        <result column="source_id" property="sourceId" />
+        <result column="time" property="time" />
+        <result column="small_image_id" property="smallImageId" />
+        <result column="big_url" property="bigUrl" />
+        <result column="from_image_id" property="fromImageId" />
+        <result column="source_type" property="sourceType" />
+        <result column="count" property="count" />
+        <result column="create_time" property="createTime" />
+        <result column="bank_name" property="bankName" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, plate_number, plate_type, plate_color, type, color, brand_code, brand_name, small_image, source_id, time, small_image_id, big_url, from_image_id, source_type, count, create_time, bank_name
+    </sql>
+
+    <resultMap id="baseCarArchiveMap" type="com.zhuanget.wavelengthexplore.entity.CarArchivesInfo">
+        <id column="id" property="id"/>
+        <result column="plate_number" property="plateNumber" jdbcType="VARCHAR"/>
+        <result column="plate_type" property="plateType" jdbcType="VARCHAR"/>
+        <result column="plate_color" property="plateColor" jdbcType="VARCHAR"/>
+        <result column="type" property="type" jdbcType="VARCHAR"/>
+        <result column="color" property="color" jdbcType="VARCHAR"/>
+        <result column="brand_code" property="brandCode" jdbcType="VARCHAR"/>
+        <result column="brand_name" property="brandName" jdbcType="VARCHAR"/>
+        <result column="small_image" property="smallImage" jdbcType="VARCHAR"/>
+        <result column="source_id" property="sourceId" jdbcType="VARCHAR"/>
+        <result column="time" property="time" jdbcType="TIMESTAMP"/>
+        <result column="small_image_id" property="smallImageId" jdbcType="VARCHAR"/>
+        <result column="big_url" property="bigUrl" jdbcType="VARCHAR"/>
+        <result column="from_image_id" property="fromImageId" jdbcType="VARCHAR"/>
+        <result column="source_type" property="sourceType" jdbcType="VARCHAR"/>
+        <result column="count" property="count" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="bank_name" property="bankName" jdbcType="VARCHAR"/>
+    </resultMap>
+    <resultMap id="baseCarArchiveDtoMap" type="com.zhuanget.wavelengthexplore.dto.CarArchivesInfoDto">
+        <id column="id" property="id"/>
+        <result column="plate_number" property="plateNumber" jdbcType="VARCHAR"/>
+        <result column="plate_type" property="plateType" jdbcType="VARCHAR"/>
+        <result column="plate_color" property="plateColor" jdbcType="VARCHAR"/>
+        <result column="type" property="type" jdbcType="VARCHAR"/>
+        <result column="color" property="color" jdbcType="VARCHAR"/>
+        <result column="brand_code" property="brandCode" jdbcType="VARCHAR"/>
+        <result column="brand_name" property="brandName" jdbcType="VARCHAR"/>
+        <result column="small_image" property="smallImage" jdbcType="VARCHAR"/>
+        <result column="source_id" property="sourceId" jdbcType="VARCHAR"/>
+        <result column="time" property="time" jdbcType="TIMESTAMP"/>
+        <result column="small_image_id" property="smallImageId" jdbcType="VARCHAR"/>
+        <result column="big_url" property="bigUrl" jdbcType="VARCHAR"/>
+        <result column="from_image_id" property="fromImageId" jdbcType="VARCHAR"/>
+        <result column="source_type" property="sourceType" jdbcType="VARCHAR"/>
+        <result column="count" property="count" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <select id="divStatistic" parameterType="string" resultType="java.util.Map">
+        ${_parameter}
+    </select>
+
+    <select id="queryCarArchiveCountByTime" resultType="java.lang.Long">
+        SELECT count(1) FROM t_car_archives_info
+        where create_time &lt;=#{endDate}
+        <if test="startDate!=null and startDate!=''">
+            and create_time &gt;=#{startDate}
+        </if>
+    </select>
+
+    <select id="countByLocation" resultType="java.lang.Integer">
+        SELECT COUNT(DISTINCT(plate_number)) from t_car_archives_info
+        <where>
+            <foreach collection="location" item="item" separator="or" open="(" close=")">
+                plate_number LIKE CONCAT(#{item},'%')
+            </foreach>
+        </where>
+    </select>
+
+    <select id="getMaxTime" resultType="java.util.Date">
+        SELECT MAX(create_time)
+        from t_car_archives_info
+    </select>
+
+    <select id="queryPlateNumber" resultType="java.lang.String">
+        select plate_number
+        from t_car_archives_info
+        where plate_number is NOT null
+          and plate_number !=''
+    </select>
+    <select id="selectCarArchivesList" resultMap="baseCarArchiveDtoMap">
+        select
+        id,plate_number,plate_type,plate_color,type,color,brand_code,brand_name,small_image,source_id,time,small_image_id,big_url,from_image_id,
+        source_type,count,create_time
+        from t_car_archives_info cai
+        <where>
+            <if test="ids != null and ids.size>0">
+                and cai.id in
+                <foreach collection="ids" item="id" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+        <if test="orderStr != null">
+            order by ${orderStr},cai.id
+        </if>
+        <if test="page != null and pageSize != null">
+            limit #{page}, #{pageSize}
+        </if>
+    </select>
+    <select id="countCarActiveNum" resultType="java.lang.Long">
+        select cai.id from t_car_archives_info cai
+        <where>
+            <include refid="carArchivesList"/>
+            and cai.time between date_sub(now(),interval 6 day) and now()
+            and cai.source_type != '1'
+        </where>
+    </select>
+    <select id="countCarNewAddtionalNum" resultType="java.lang.Long">
+        select cai.id from t_car_archives_info cai
+        <where>
+            <include refid="carArchivesList"/>
+            and cai.create_time between date_sub(now(),interval 6 day) and now()
+        </where>
+    </select>
+    <select id="countCarTotalNum" resultType="java.lang.Long">
+        select cai.id from t_car_archives_info cai
+        <where>
+            <include refid="carArchivesList"/>
+        </where>
+    </select>
+    <sql id="carArchivesList">
+        <if test="ids != null and ids.size>0">
+            and cai.id in
+            <foreach collection="ids" item="id" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </if>
+        <if test="color != null and color !=''">
+            and cai.color = #{color,jdbcType=VARCHAR}
+        </if>
+        <if test="type != null and type !=''">
+            and cai.type = #{type,jdbcType=VARCHAR}
+        </if>
+        <if test="brandCodeList != null and brandCodeList.size>0">
+            and cai.brand_code in
+            <foreach collection="brandCodeList" item="brandCode" open="(" separator="," close=")">
+                #{brandCode,jdbcType=VARCHAR}
+            </foreach>
+        </if>
+        <if test="carPlateNumber != null and carPlateNumber !=''">
+            and cai.plate_number like CONCAT('%',#{carPlateNumber,jdbcType=VARCHAR},'%')
+        </if>
+        <if test="outLocationNumber != null and outLocationNumber !=''">
+            and cai.plate_number not like CONCAT('%',#{outLocationNumber,jdbcType=VARCHAR},'%')
+        </if>
+        <if test="plateNumber != null and plateNumber !=''">
+            and cai.plate_number like CONCAT('%',#{plateNumber,jdbcType=VARCHAR},'%')
+        </if>
+        <if test="plateNumbers != null and plateNumbers.size>0">
+            and cai.plate_number in
+            <foreach collection="plateNumbers" item="plateNumber" open="(" separator="," close=")">
+                #{plateNumber,jdbcType=VARCHAR}
+            </foreach>
+        </if>
+        <if test="redPlateNumbers != null and redPlateNumbers.size>0">
+            and cai.plate_number not in
+            <foreach collection="redPlateNumbers" item="plateNumber" open="(" separator="," close=")">
+                #{plateNumber,jdbcType=VARCHAR}
+            </foreach>
+        </if>
+    </sql>
+    <select id="getCarId" resultType="java.lang.Long">
+        select id
+        from t_car_archives_info
+        WHERE plate_number = #{plateNumber}
+    </select>
+    <select id="countCarNewAddtionalNumByTime" resultType="java.lang.Long">
+        select cai.id from t_car_archives_info cai
+        <where>
+            <include refid="newAddList"/>
+            and cai.create_time between #{startTime} and #{endTime}
+            and cai.source_type = "1"
+        </where>
+    </select>
+    <select id="countEventNewAddNum" resultType="java.lang.Long">
+        select cai.id from t_car_archives_info cai
+        <where>
+            <include refid="newAddList"/>
+            and cai.create_time > #{unActiveTime}
+        </where>
+    </select>
+    <select id="countCarTotalNumSize" resultType="java.lang.Long">
+        select count(*) from t_car_archives_info cai
+        <where>
+            <include refid="carArchivesList"/>
+        </where>
+    </select>
+    <select id="countEventNewAddNumSize" resultType="java.lang.Long">
+        select count(*) from t_car_archives_info cai
+        <where>
+            <include refid="newAddList"/>
+            and cai.create_time > #{unActiveTime}
+        </where>
+    </select>
+    <select id="countCarActiveNumSize" resultType="java.lang.Long">
+        select count(*) from t_car_archives_info cai
+        <where>
+            <include refid="carArchivesList"/>
+            and cai.time between date_sub(now(),interval 6 day) and now()
+            and cai.source_type != '1'
+        </where>
+    </select>
+    <select id="countCarNewAddtionalNumSize" resultType="java.lang.Long">
+        select count(*) from t_car_archives_info cai
+        <where>
+            <include refid="carArchivesList"/>
+            and cai.create_time between date_sub(now(),interval 6 day) and now()
+        </where>
+    </select>
+    <select id="queryIdsByIdsAndPlateNumbers" resultType="java.lang.Long">
+        select id from t_car_archives_info
+        <where>
+            <if test="newAddIds != null and newAddIds.size>0">
+                and id in
+                <foreach collection="newAddIds" item="id" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+            <if test="plateNumbers != null and plateNumbers.size>0">
+                and plate_number in
+                <foreach collection="plateNumbers" item="plateNumber" open="(" separator="," close=")">
+                    #{plateNumber,jdbcType=VARCHAR}
+                </foreach>
+            </if>
+        </where>
+    </select>
+    <sql id="newAddList">
+        <if test="req.ids != null and req.ids.size>0">
+            and cai.id in
+            <foreach collection="req.ids" item="id" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </if>
+        <if test="req.color != null and req.color !=''">
+            and cai.color = #{req.color,jdbcType=VARCHAR}
+        </if>
+        <if test="req.type != null and req.type !=''">
+            and cai.type = #{req.type,jdbcType=VARCHAR}
+        </if>
+        <if test="req.brandCodeList != null and req.brandCodeList.size>0">
+            and cai.brand_code in
+            <foreach collection="req.brandCodeList" item="brandCode" open="(" separator="," close=")">
+                #{brandCode,jdbcType=VARCHAR}
+            </foreach>
+        </if>
+        <if test="req.carPlateNumber != null and req.carPlateNumber !=''">
+            and cai.plate_number like CONCAT('%',#{req.carPlateNumber,jdbcType=VARCHAR},'%')
+        </if>
+        <if test="req.outLocationNumber != null and req.outLocationNumber !=''">
+            and cai.plate_number not like CONCAT('%',#{req.outLocationNumber,jdbcType=VARCHAR},'%')
+        </if>
+        <if test="req.plateNumber != null and req.plateNumber !=''">
+            and cai.plate_number like CONCAT('%',#{req.plateNumber,jdbcType=VARCHAR},'%')
+        </if>
+        <if test="req.plateNumbers != null and req.plateNumbers.size>0">
+            and cai.plate_number in
+            <foreach collection="req.plateNumbers" item="plateNumber" open="(" separator="," close=")">
+                #{plateNumber,jdbcType=VARCHAR}
+            </foreach>
+        </if>
+    </sql>
+
+</mapper>
